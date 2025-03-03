@@ -23,38 +23,27 @@ def delenie(a, b):
     return a / b
 
 command = input("Въведете желаното действие, което искате да изпълните (събиране / изваждане / умножение / деление): ")
+command = input("Въведете желаното действие (събиране / изваждане / умножение / деление): ")
+
 if command == "събиране":
     a = float(input("Въведете събираемото а: "))
     b = float(input("Въведете събираемото b: "))
-    print(f"Сбора на числата е {subirane(a, b)}")
-
+    print(f"Сборът на числата е {add(a, b)}")
+    
 elif command == "изваждане":
     a = float(input("Въведете числото а: "))
     b = float(input("Въведете числото b: "))
-    print(f"Разликата на числата е {izvajdane(a, b)}")
-
+    print(f"Разликата на числата е {subtract(a, b)}")
+    
 elif command == "умножение":
     a = float(input("Въведете числото а: "))
     b = float(input("Въведете числото b: "))
-    print(f"Произведението на числата е {umnojenie(a, b)}")
-
-else:
+    print(f"Произведението на числата е {multiply(a, b)}")
+    
+elif command == "деление":
     a = float(input("Въведете делимото а: "))
     b = float(input("Въведете делителя b: "))
-    print(f"Частното на числата е {delenie(a, b)}")
-
-
-numbers = input("Въведете числата, разделени с интервал: ")
-numbers_list = [int(num) for num in numbers.split()]
-num = int(input("Въведете число за сравнение: "))
-
-def promeni(n):
-    lenght = len(numbers_list)
-    for i in range(lenght):
-        if numbers_list[i] > num:
-            numbers_list[i] = 0
-        else:
-            numbers_list[i] = numbers_list[i]
-    return numbers_list
-
-print(promeni(numbers_list))
+    print(f"Частното на числата е {divide(a, b)}")
+    
+else:
+    print("Невалидна операция")
