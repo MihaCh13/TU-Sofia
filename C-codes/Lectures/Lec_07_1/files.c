@@ -125,18 +125,21 @@ void change_file (char *file, char ch) {
     int size = lseek(fd, 0, SEEK_END); 
     if (size == -1) {
         perror("Error with lseek\n"); 
+        close(fd); 
         return; 
     }
     char buff[size+1];
     int size2 = lseek(fd, 0, SEEK_SET); 
     if (size2 == -1) {
         perror("Error with lseek\n"); 
+        close(fd); 
         return; 
     }
 
     int res = read(fd, buff, size); 
     if (res == -1) {
         perror("Error with read\n"); 
+        close(fd); 
         return; 
     }
     for (size_t i = 0; i < size; i++) {
@@ -152,8 +155,10 @@ void change_file (char *file, char ch) {
     res = write(fd, buff, size); 
     if (res == -1) {
         perror("Error with write\n"); 
+        close(fd); 
         return; 
     }
+    close(fd); 
 
 }
 
