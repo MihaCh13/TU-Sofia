@@ -17,8 +17,7 @@ void create_binary_file() {
         fwrite(&num, sizeof(int), 1, file);
 
         printf("Add another number? (y/n): ");
-        scanf(" %c", &choice); // skip newline with space
-
+        scanf(" %c", &choice); 
     } while (choice == 'y' || choice == 'Y');
 
     fclose(file);
@@ -28,7 +27,7 @@ void create_binary_file() {
 int count_even_digits(int num) {
     int count = 0;
     num = abs(num);
-    if (num == 0) return 1; // zero is even
+    if (num == 0) return 1; 
     while (num > 0) {
         int digit = num % 10;
         if (digit % 2 == 0) count++;
