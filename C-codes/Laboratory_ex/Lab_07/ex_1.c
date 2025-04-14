@@ -1,6 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int my_abs(int num) {
+    if (num < 0) {
+        return -num;
+    }
+    return num;
+}
+
+void quicksort(int *arr, int low, int high) {
+    if (low < high) {
+        int pivot = arr[high];
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+
+        int pi = i + 1;
+        quicksort(arr, low, pi - 1);  
+        quicksort(arr, pi + 1, high);  
+    }
+}
+
 void create_binary_file() {
     FILE *file = fopen("data.bin", "wb");
     if (!file) {
@@ -28,7 +59,7 @@ void create_binary_file() {
 
 int count_even_digits(int num) {
     int count = 0;
-    num = abs(num);
+    num = my_abs(num); 
     if (num == 0) return 1;
     while (num > 0) {
         int digit = num % 10;
@@ -41,7 +72,7 @@ int count_even_digits(int num) {
 
 int count_odd_digits(int num) {
     int count = 0;
-    num = abs(num);
+    num = my_abs(num); 
     while (num > 0) {
         int digit = num % 10;
         if (digit % 2 != 0)
@@ -50,7 +81,6 @@ int count_odd_digits(int num) {
     }
     return count;
 }
-
 void count_digits_from_file() {
     FILE *file = fopen("data.bin", "rb");
     if (!file) {
@@ -77,10 +107,6 @@ void count_digits_from_file() {
     free(arr);
 }
 
-int compare(const void *a, const void *b) {
-    return (*(int *)a - *(int *)b);
-}
-
 void sort_and_save_to_text_file() {
     FILE *file = fopen("data.bin", "rb");
     if (!file) {
@@ -94,7 +120,7 @@ void sort_and_save_to_text_file() {
     fread(arr, sizeof(int), N, file);
     fclose(file);
 
-    qsort(arr, N, sizeof(int), compare);
+    quicksort(arr, 0, N - 1); 
 
     FILE *out = fopen("sorted.txt", "w");
     if (!out) {
