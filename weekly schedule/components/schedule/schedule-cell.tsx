@@ -68,8 +68,8 @@ export function ScheduleCell({
   const hasOdd = oddWeekEvents.length > 0;
   const hasEven = evenWeekEvents.length > 0;
 
-  // HORIZONTAL SPLIT for ODD/EVEN - Safe zones, no overlap
-  if (hasOdd && hasEven) {
+  // HORIZONTAL SPLIT for ODD/EVEN - Always use split layout when any odd or even exists
+  if (hasOdd || hasEven) {
     return (
       <td 
         className="schedule-cell border border-border p-0"
@@ -81,23 +81,32 @@ export function ScheduleCell({
           <div className="split-top">
             <div className="split-label odd-label">Нечетна</div>
             <div className="split-content">
-              {oddWeekEvents.length === 1 ? (
-                <EventBlock 
-                  event={oddWeekEvents[0]} 
-                  isCompact
-                  onClick={() => onEventClick(oddWeekEvents[0])} 
-                />
+              {hasOdd ? (
+                oddWeekEvents.length === 1 ? (
+                  <EventBlock 
+                    event={oddWeekEvents[0]} 
+                    isCompact
+                    onClick={() => onEventClick(oddWeekEvents[0])} 
+                  />
+                ) : (
+                  <div className="flex gap-0.5 w-full h-full">
+                    {oddWeekEvents.slice(0, 2).map((event) => (
+                      <div key={event.id} className="flex-1 min-w-0">
+                        <EventBlock 
+                          event={event} 
+                          isCompact
+                          onClick={() => onEventClick(event)} 
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )
               ) : (
-                <div className="flex gap-0.5 w-full h-full">
-                  {oddWeekEvents.slice(0, 2).map((event) => (
-                    <div key={event.id} className="flex-1 min-w-0">
-                      <EventBlock 
-                        event={event} 
-                        isCompact
-                        onClick={() => onEventClick(event)} 
-                      />
-                    </div>
-                  ))}
+                <div 
+                  className="h-full w-full flex items-center justify-center bg-muted/30 rounded cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={onCellClick}
+                >
+                  <Plus className="w-4 h-4 text-muted-foreground/40" />
                 </div>
               )}
             </div>
@@ -110,67 +119,35 @@ export function ScheduleCell({
           <div className="split-bottom">
             <div className="split-label even-label">Четна</div>
             <div className="split-content">
-              {evenWeekEvents.length === 1 ? (
-                <EventBlock 
-                  event={evenWeekEvents[0]} 
-                  isCompact
-                  onClick={() => onEventClick(evenWeekEvents[0])} 
-                />
+              {hasEven ? (
+                evenWeekEvents.length === 1 ? (
+                  <EventBlock 
+                    event={evenWeekEvents[0]} 
+                    isCompact
+                    onClick={() => onEventClick(evenWeekEvents[0])} 
+                  />
+                ) : (
+                  <div className="flex gap-0.5 w-full h-full">
+                    {evenWeekEvents.slice(0, 2).map((event) => (
+                      <div key={event.id} className="flex-1 min-w-0">
+                        <EventBlock 
+                          event={event} 
+                          isCompact
+                          onClick={() => onEventClick(event)} 
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )
               ) : (
-                <div className="flex gap-0.5 w-full h-full">
-                  {evenWeekEvents.slice(0, 2).map((event) => (
-                    <div key={event.id} className="flex-1 min-w-0">
-                      <EventBlock 
-                        event={event} 
-                        isCompact
-                        onClick={() => onEventClick(event)} 
-                      />
-                    </div>
-                  ))}
+                <div 
+                  className="h-full w-full flex items-center justify-center bg-muted/30 rounded cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={onCellClick}
+                >
+                  <Plus className="w-4 h-4 text-muted-foreground/40" />
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      </td>
-    );
-  }
-
-  // Single week type only (odd OR even, but not both)
-  if (hasOdd || hasEven) {
-    const weekEvents = hasOdd ? oddWeekEvents : evenWeekEvents;
-    const weekType = hasOdd ? 'odd' : 'even';
-    const label = hasOdd ? 'Нечетна' : 'Четна';
-    
-    return (
-      <td 
-        className="schedule-cell border border-border p-0"
-        style={{ height: `${height}px` }}
-        rowSpan={rowSpan}
-      >
-        <div className={cn("single-week-container", weekType)}>
-          <div className={cn("split-label", weekType === 'odd' ? 'odd-label' : 'even-label')}>
-            {label}
-          </div>
-          <div className="single-week-content">
-            {weekEvents.length === 1 ? (
-              <EventBlock 
-                event={weekEvents[0]} 
-                onClick={() => onEventClick(weekEvents[0])} 
-              />
-            ) : (
-              <div className="flex gap-0.5 w-full h-full">
-                {weekEvents.slice(0, 2).map((event) => (
-                  <div key={event.id} className="flex-1 min-w-0">
-                    <EventBlock 
-                      event={event} 
-                      isCompact
-                      onClick={() => onEventClick(event)} 
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </td>
