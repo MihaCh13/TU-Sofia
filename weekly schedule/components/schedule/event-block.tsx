@@ -48,10 +48,18 @@ export function EventBlock({ event, isCompact = false, onClick }: EventBlockProp
           {event.subject_name}
         </div>
         
-        {/* Makeup label - shown below subject name */}
+        {/* Makeup label with session type - shown below subject name */}
         {isMakeup && !isCompact && (
-          <div className="text-[11px] font-semibold text-pink-700/80 italic">
-            Отработване
+          <div className="text-[11px] font-semibold text-pink-700/80 italic leading-tight">
+            <span>Отработване</span>
+            <span className="block text-[10px] font-medium text-pink-600/70">
+              {event.subject_type === 'seminar' ? 'Семинарно упр.' : 'Лабораторно упр.'}
+            </span>
+          </div>
+        )}
+        {isMakeup && isCompact && (
+          <div className="text-[9px] font-semibold text-pink-700/70 italic truncate">
+            Отр. ({event.subject_type === 'seminar' ? 'сем.' : 'лаб.'})
           </div>
         )}
         
