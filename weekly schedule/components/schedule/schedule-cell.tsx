@@ -68,87 +68,85 @@ export function ScheduleCell({
   const hasOdd = oddWeekEvents.length > 0;
   const hasEven = evenWeekEvents.length > 0;
 
-  // HORIZONTAL SPLIT for ODD/EVEN - Always use split layout when any odd or even exists
-  if (hasOdd || hasEven) {
+  // Check total events for collision fallback (3+ events = stacked list)
+  const totalOddEvenEvents = oddWeekEvents.length + evenWeekEvents.length;
+
+  // DIAGONAL SPLIT for ODD/EVEN - Use diagonal layout when any odd or even exists and <= 2 total events
+  if ((hasOdd || hasEven) && totalOddEvenEvents <= 2) {
     return (
       <td 
         className="schedule-cell border border-border p-0"
         style={{ height: `${height}px` }}
         rowSpan={rowSpan}
       >
-        <div className="split-container">
-          {/* TOP HALF - ODD WEEK */}
-          <div className="split-top">
-            <div className="split-label odd-label">Нечетна</div>
-            <div className="split-content">
-              {hasOdd ? (
-                oddWeekEvents.length === 1 ? (
-                  <EventBlock 
-                    event={oddWeekEvents[0]} 
-                    isCompact
-                    onClick={() => onEventClick(oddWeekEvents[0])} 
-                  />
-                ) : (
-                  <div className="flex gap-0.5 w-full h-full">
-                    {oddWeekEvents.slice(0, 2).map((event) => (
-                      <div key={event.id} className="flex-1 min-w-0">
-                        <EventBlock 
-                          event={event} 
-                          isCompact
-                          onClick={() => onEventClick(event)} 
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )
-              ) : (
-                <div 
-                  className="h-full w-full flex items-center justify-center bg-muted/30 rounded cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={onCellClick}
-                >
-                  <Plus className="w-4 h-4 text-muted-foreground/40" />
-                </div>
-              )}
-            </div>
+        <div className="diagonal-container">
+          {/* DIAGONAL LINE */}
+          <div className="diagonal-line" />
+          
+          {/* TOP-LEFT TRIANGLE - ODD WEEK */}
+          <div className="diagonal-odd">
+            <div className="diagonal-label odd-label">Неч.</div>
+            {hasOdd ? (
+              <div className="diagonal-content odd-content">
+                <EventBlock 
+                  event={oddWeekEvents[0]} 
+                  isCompact
+                  onClick={() => onEventClick(oddWeekEvents[0])} 
+                />
+              </div>
+            ) : (
+              <div 
+                className="diagonal-empty odd-empty"
+                onClick={onCellClick}
+              >
+                <Plus className="w-4 h-4 text-muted-foreground/40" />
+              </div>
+            )}
           </div>
           
-          {/* DIVIDER LINE */}
-          <div className="split-divider" />
-          
-          {/* BOTTOM HALF - EVEN WEEK */}
-          <div className="split-bottom">
-            <div className="split-label even-label">Четна</div>
-            <div className="split-content">
-              {hasEven ? (
-                evenWeekEvents.length === 1 ? (
-                  <EventBlock 
-                    event={evenWeekEvents[0]} 
-                    isCompact
-                    onClick={() => onEventClick(evenWeekEvents[0])} 
-                  />
-                ) : (
-                  <div className="flex gap-0.5 w-full h-full">
-                    {evenWeekEvents.slice(0, 2).map((event) => (
-                      <div key={event.id} className="flex-1 min-w-0">
-                        <EventBlock 
-                          event={event} 
-                          isCompact
-                          onClick={() => onEventClick(event)} 
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )
-              ) : (
-                <div 
-                  className="h-full w-full flex items-center justify-center bg-muted/30 rounded cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={onCellClick}
-                >
-                  <Plus className="w-4 h-4 text-muted-foreground/40" />
-                </div>
-              )}
-            </div>
+          {/* BOTTOM-RIGHT TRIANGLE - EVEN WEEK */}
+          <div className="diagonal-even">
+            <div className="diagonal-label even-label">Чет.</div>
+            {hasEven ? (
+              <div className="diagonal-content even-content">
+                <EventBlock 
+                  event={evenWeekEvents[0]} 
+                  isCompact
+                  onClick={() => onEventClick(evenWeekEvents[0])} 
+                />
+              </div>
+            ) : (
+              <div 
+                className="diagonal-empty even-empty"
+                onClick={onCellClick}
+              >
+                <Plus className="w-4 h-4 text-muted-foreground/40" />
+              </div>
+            )}
           </div>
+        </div>
+      </td>
+    );
+  }
+
+  // COLLISION FALLBACK: 3+ odd/even events - stacked list view
+  if ((hasOdd || hasEven) && totalOddEvenEvents > 2) {
+    const allOddEvenEvents = [...oddWeekEvents, ...evenWeekEvents];
+    return (
+      <td 
+        className="schedule-cell border border-border p-1"
+        style={{ height: `${height}px` }}
+        rowSpan={rowSpan}
+      >
+        <div className="h-full flex flex-col gap-1 overflow-hidden">
+          {allOddEvenEvents.map((event) => (
+            <EventBlock 
+              key={event.id} 
+              event={event} 
+              isCompact
+              onClick={() => onEventClick(event)} 
+            />
+          ))}
         </div>
       </td>
     );
