@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, GraduationCap, CalendarPlus } from 'lucide-react';
 import { useScheduleStore } from '@/lib/schedule-store';
@@ -12,15 +12,41 @@ interface HeaderProps {
 
 export function Header({ onAddEvent }: HeaderProps) {
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const calendarConfig = useScheduleStore((state) => state.calendarConfig);
-  const semester = useScheduleStore((state) => state.semester);
+  const { calendarConfig, semester } = useScheduleStore();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Calculate academic year from calendar config
+  const academicYear = useMemo(() => {
+    if (!calendarConfig) return null;
+    
+    try {
+      const winterStart = calendarConfig.winterSemester.start 
+        ? new Date(calendarConfig.winterSemester.start) 
+        : null;
+      const summerEnd = calendarConfig.summerSemester.end 
+        ? new Date(calendarConfig.summerSemester.end) 
+        : null;
+      
+      if (winterStart && summerEnd) {
+        const startYear = winterStart.getFullYear();
+        const endYear = summerEnd.getFullYear();
+        return `${startYear}/${endYear}`;
+      }
+      
+      if (winterStart) {
+        return `${winterStart.getFullYear()}/${winterStart.getFullYear() + 1}`;
+      }
+      
+      if (summerEnd) {
+        return `${summerEnd.getFullYear() - 1}/${summerEnd.getFullYear()}`;
+      }
+    } catch {
+      return null;
+    }
+    
+    return null;
+  }, [calendarConfig]);
 
-  const semesterLabel = semester === 'winter' ? 'Winter Semester' : 'Summer Semester';
+  const semesterLabel = semester === 'winter' ? 'Зимен семестър' : 'Летен семестър';
 
   return (
     <header className="bg-card/80 backdrop-blur-md shadow-sm border-b border-primary/10 px-6 py-5 flex-shrink-0">
@@ -28,10 +54,10 @@ export function Header({ onAddEvent }: HeaderProps) {
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent flex items-center gap-3">
             <GraduationCap className="w-7 h-7 text-primary" />
-            <span>Schedule</span>
+            <span>Учебна година 2025/2026</span>
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {mounted && calendarConfig ? semesterLabel : 'Manage your class schedule'}
+            {academicYear ? semesterLabel : 'Управление на учебния график'}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -41,14 +67,14 @@ export function Header({ onAddEvent }: HeaderProps) {
             className="border-primary/30 hover:border-primary hover:bg-primary/5 bg-transparent"
           >
             <CalendarPlus className="w-4 h-4 mr-2" />
-            {mounted && calendarConfig ? 'Edit Calendar' : 'Setup Calendar'}
+            {calendarConfig ? 'Редактирай календар' : 'Добави календар'}
           </Button>
           <Button 
             onClick={onAddEvent}
             className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Class
+            Добави събитие
           </Button>
         </div>
       </div>

@@ -1,7 +1,8 @@
 'use client';
 
-import { cn } from '@/lib/utils'
-import { useMemo, useEffect, useState } from 'react';
+import { cn } from "@/lib/utils"
+
+import { useMemo } from 'react';
 import { TIME_SLOTS, DAYS, DAY_NAMES, getSlotIndex, getSlotCountBetween } from '@/lib/schedule-types';
 import type { ScheduleEvent } from '@/lib/schedule-types';
 import { useScheduleStore } from '@/lib/schedule-store';
@@ -14,12 +15,7 @@ interface ScheduleTableProps {
 }
 
 export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps) {
-  const [mounted, setMounted] = useState(false);
   const events = useScheduleStore((state) => state.events);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Group events by day and start slot
   const eventGrid = useMemo(() => {
@@ -60,6 +56,7 @@ export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps)
             occupied[event.day].add(i);
             coveredSlots++;
           } else {
+            // Skip lunch row in occupied calculation but don't count it
             occupied[event.day].add(i);
           }
         }
@@ -80,9 +77,11 @@ export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps)
       if (slotCount > maxSlotCount) maxSlotCount = slotCount;
     });
 
+    // Account for lunch break
     const lunchIdx = TIME_SLOTS.findIndex(s => s.lunch);
     let rowSpan = maxSlotCount;
     
+    // If span would cross lunch, add 1 for the lunch row
     const endIdx = slotIdx + maxSlotCount - 1;
     if (slotIdx < lunchIdx && endIdx >= lunchIdx) {
       rowSpan += 1;
@@ -91,9 +90,47 @@ export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps)
     return Math.max(1, rowSpan);
   };
 
-  if (!mounted) {
-    return <div className="flex-1 bg-background" />;
-  }
+  // Odd/Even Week Coloring Logic
+  const getWeekType = (date: Date): 'odd' | 'even' | null => {
+    const calendarConfig = useScheduleStore.getState().calendarConfig;
+    if (!calendarConfig) return null;
+
+    const winterStart = new Date(calendarConfig.winterSemester.start);
+    const summerStart = new Date(calendarConfig.summerSemester.start);
+    
+    let referenceDate: Date | null = null;
+    
+    if (date >= winterStart && date <= new Date(calendarConfig.winterSemester.end)) {
+      referenceDate = winterStart;
+    } else if (date >= summerStart && date <= new Date(calendarConfig.summerSemester.end)) {
+      referenceDate = summerStart;
+    }
+
+    if (!referenceDate) return null;
+
+    const diffInDays = Math.floor((date.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24));
+    const weekNumber = Math.floor(diffInDays / 7) + 1;
+    return weekNumber % 2 === 1 ? 'odd' : 'even';
+  };
+
+  const isVacation = (date: Date): boolean => {
+    const vacations = useScheduleStore.getState().vacations;
+    const dateStr = date.toISOString().split('T')[0];
+    return vacations.includes(dateStr);
+  };
+
+  const isSession = (date: Date): string | null => {
+    const config = useScheduleStore.getState().calendarConfig;
+    if (!config) return null;
+    
+    const d = date.toISOString().split('T')[0];
+    if (d >= config.winterRegularSession.start && d <= config.winterRegularSession.end) return 'winter-regular';
+    if (d >= config.winterRetakeSession.start && d <= config.winterRetakeSession.end) return 'winter-retake';
+    if (d >= config.summerRegularSession.start && d <= config.summerRegularSession.end) return 'summer-regular';
+    if (d >= config.annualRetakeSession.start && d <= config.annualRetakeSession.end) return 'annual-retake';
+    if (d >= config.liquidationSession.start && d <= config.liquidationSession.end) return 'liquidation';
+    return null;
+  };
 
   return (
     <div className="flex-1 overflow-auto scrollbar-thin">
@@ -102,7 +139,7 @@ export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps)
           <thead className="sticky top-0 z-10">
             <tr className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 shadow-lg">
               <th className="w-28 px-4 py-5 text-center text-white font-semibold text-sm tracking-wide border-r border-slate-600/50 rounded-tl-lg">
-                <span className="opacity-90">Time</span>
+                <span className="opacity-90">Час</span>
               </th>
               {DAYS.map((day, idx) => (
                 <th 
@@ -127,12 +164,12 @@ export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps)
                     </td>
                     <td 
                       colSpan={5} 
-                      className="bg-yellow-50 dark:bg-yellow-950/20"
+                      className="lunch-bg"
                       style={{ height: '60px' }}
                     >
-                      <div className="h-full flex items-center justify-center gap-2 font-semibold text-slate-600 dark:text-slate-400">
+                      <div className="h-full flex items-center justify-center gap-2 font-semibold text-slate-600">
                         <UtensilsCrossed className="w-5 h-5" />
-                        <span>Lunch Break</span>
+                        <span>Обедна почивка</span>
                       </div>
                     </td>
                   </tr>
@@ -145,6 +182,7 @@ export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps)
                     {slot.start}–{slot.end}
                   </td>
                   {DAYS.map((day) => {
+                    // Skip if this cell is covered by a rowspan from above
                     if (occupiedCells[day].has(slotIdx)) {
                       return null;
                     }

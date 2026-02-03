@@ -1,31 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ScheduleTable } from '@/components/schedule/schedule-table';
 import { EventModal } from '@/components/schedule/event-modal';
 import { Header } from '@/components/schedule/header';
-import { Sidebar } from '@/components/schedule/sidebar';
+import { useScheduleStore } from '@/lib/schedule-store';
 import type { ScheduleEvent } from '@/lib/schedule-types';
 
-export default function Page() {
+export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<ScheduleEvent | null>(null);
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedStartTime, setSelectedStartTime] = useState('');
-  const [selectedEndTime, setSelectedEndTime] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    useScheduleStore.persist.rehydrate();
+    setMounted(true);
+  }, []);
 
   const handleAddEvent = () => {
     setEditingEvent(null);
     setSelectedDay('');
     setSelectedStartTime('');
-    setSelectedEndTime('');
     setIsModalOpen(true);
   };
 
-  const handleCellClick = (day: string, startTime: string, endTime: string) => {
+  const handleCellClick = (day: string, startTime: string) => {
     setSelectedDay(day);
     setSelectedStartTime(startTime);
-    setSelectedEndTime(endTime);
     setEditingEvent(null);
     setIsModalOpen(true);
   };
@@ -40,9 +43,19 @@ export default function Page() {
     setEditingEvent(null);
   };
 
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Зареждане...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header onAddEvent={handleAddEvent} />
         <ScheduleTable
@@ -53,10 +66,9 @@ export default function Page() {
       <EventModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        editingEvent={editingEvent}
+        event={editingEvent}
         defaultDay={selectedDay}
         defaultStartTime={selectedStartTime}
-        defaultEndTime={selectedEndTime}
       />
     </div>
   );
