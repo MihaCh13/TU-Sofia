@@ -1,0 +1,62 @@
+Разбира се. Ето готовия промпт (Prompt 10), който е структуриран така, че AI да разбере точно как да разпредели сложните комбинации (особено в сряда и четвъртък) и да визуализира програмата директно.
+
+Копирай текста по-долу и го подай на AI:
+
+Prompt 10: Injecting the Final User Schedule (Corrected Data)
+Role: Senior Developer. Task: Overwrite the current events array in script.js with the FINAL, Specific User Schedule. Context: The user has provided the exact list of classes, rooms, and week cycle logic.
+
+Please replace the existing events data with the following block. Time Slot Mapping:
+
+07:30 start -> startSlot: 0, endSlot: 2
+
+10:30 start -> startSlot: 3, endSlot: 5
+
+13:45 start -> startSlot: 7, endSlot: 9
+
+16:45 start -> startSlot: 10, endSlot: 12
+
+Instructions: Create the events array using this specific data:
+
+MONDAY
+
+10:30 – 13:15: "Компютърни системи" (Lecture) | Room: 1151 | Control: "exam" | Cycle: Every
+
+13:45 – 16:30: "Сигнали и системи" (Lecture) | Room: 1153 | Control: "exam" | Project: "course-work" | Cycle: Every
+
+16:45 – 19:30: "Бази данни" (Lab) | Room: 2108 Б | Subgroup: "A" | Cycle: Every
+
+TUESDAY
+
+07:30 – 10:15: "Сигнали и системи" (Lab) | Room: 1256 | Subgroup: "A" | Cycle: ODD (Нечетна)
+
+07:30 – 10:15: "Сигнали и системи" (Lab) | Room: 1256 | Subgroup: "B" | Cycle: EVEN (Четна)
+
+10:30 – 13:15: "Основи на мрежовите технологии" (Lecture) | Room: 2030 | Control: "exam" | Project: "course-work" | Cycle: Every
+
+13:45 – 16:30: "Измервания в ИКТ" (Lecture) | Room: 1154 | Control: "ongoing" (Текуща оценка) | Cycle: Every
+
+16:45 – 19:30: "Бази данни" (Lab) | Room: 2108 Б | Subgroup: "B" | Cycle: Every
+
+WEDNESDAY (Complex Split - 07:30 Start) Please ensure these 4 events appear in the same time slot using the quadrant/split logic:
+
+Odd Week / Group A: "Компютърни системи" (Lab) | Room: 1212
+
+Even Week / Group A: "Основи на мрежовите технологии" (Lab) | Room: 2108 Б
+
+Odd Week / Group B: "Основи на мрежовите технологии" (Lab) | Room: 2108 В
+
+Even Week / Group B: "Компютърни системи" (Lab) | Room: 1212 Wednesday Continue:
+
+10:30 – 13:15: "Бази данни" (Lecture) | Room: 1153 | Control: "ongoing" | Project: "course-project" | Cycle: Every
+
+THURSDAY
+
+10:30 – 13:15: "Измервания в ИКТ" (Lab) | Room: 1264 | Subgroup: "A" | Cycle: ODD
+
+10:30 – 13:15: "Измервания в ИКТ" (Lab) | Room: 1264 | Subgroup: "B" | Cycle: EVEN
+
+FRIDAY
+
+07:30 – 10:15: "Сигнали и системи" (Seminar) | Room: 3605 | Cycle: Every
+
+Action: Generate the JavaScript code for the events array containing these objects. Ensure all types (lecture/lab/seminar) and visual tags (projects/exams) are set correctly.
