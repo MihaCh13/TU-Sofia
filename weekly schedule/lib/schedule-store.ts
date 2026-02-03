@@ -23,6 +23,8 @@ interface ScheduleStore {
   semester: 'winter' | 'summer';
   setSemester: (semester: 'winter' | 'summer') => void;
   calendarConfig: CalendarConfig | null;
+  academicYear: string;
+  setAcademicYear: (year: string) => void;
   setCalendarConfig: (config: CalendarConfig) => void;
   clearCalendarConfig: () => void;
   holidays: string[];
@@ -53,7 +55,18 @@ export const useScheduleStore = create<ScheduleStore>()(
         })),
       semester: 'winter',
       setSemester: (semester) => set({ semester }),
-      calendarConfig: null,
+      academicYear: '2025/2026',
+      setAcademicYear: (year) => set({ academicYear: year }),
+      vacations: ['2025-12-22', '2025-12-23', '2025-12-24', '2025-12-25', '2025-12-26', '2025-12-27', '2025-12-28', '2025-12-29', '2025-12-30', '2025-12-31', '2026-01-01', '2026-01-02', '2026-01-03', '2026-01-04'],
+      calendarConfig: {
+        winterSemester: { start: '2025-09-23', end: '2025-12-20' },
+        winterRegularSession: { start: '2026-01-05', end: '2026-01-24' },
+        winterRetakeSession: { start: '2026-01-26', end: '2026-02-07' },
+        summerSemester: { start: '2026-02-09', end: '2026-05-09' },
+        summerRegularSession: { start: '2026-05-11', end: '2026-05-30' },
+        annualRetakeSession: { start: '2026-06-01', end: '2026-06-20' },
+        liquidationSession: { start: '2025-09-15', end: '2025-09-20' },
+      },
       setCalendarConfig: (config) => set({ calendarConfig: config }),
       clearCalendarConfig: () => set({ calendarConfig: null }),
       holidays: [],
@@ -73,6 +86,7 @@ export const useScheduleStore = create<ScheduleStore>()(
     }),
     {
       name: 'schedule-storage',
+      version: 2,
     }
   )
 );

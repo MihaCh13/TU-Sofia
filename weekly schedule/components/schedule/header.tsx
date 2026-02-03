@@ -54,11 +54,7 @@ export function Header({ onAddEvent }: HeaderProps) {
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent flex items-center gap-3">
             <GraduationCap className="w-7 h-7 text-primary" />
-            {academicYear ? (
-              <span>Учебна година {academicYear}</span>
-            ) : (
-              <span>Университетски Разпис</span>
-            )}
+            <span>Учебна година 2025/2026</span>
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             {academicYear ? semesterLabel : 'Управление на учебния график'}

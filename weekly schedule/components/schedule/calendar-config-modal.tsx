@@ -14,13 +14,13 @@ interface CalendarConfigModalProps {
 }
 
 const defaultConfig: CalendarConfig = {
-  winterSemester: { start: '', end: '' },
-  winterRegularSession: { start: '', end: '' },
-  winterRetakeSession: { start: '', end: '' },
-  summerSemester: { start: '', end: '' },
-  summerRegularSession: { start: '', end: '' },
-  annualRetakeSession: { start: '', end: '' },
-  liquidationSession: { start: '', end: '' },
+  winterSemester: { start: '2025-09-23', end: '2025-12-20' },
+  winterRegularSession: { start: '2026-01-05', end: '2026-01-24' },
+  winterRetakeSession: { start: '2026-01-26', end: '2026-02-07' },
+  summerSemester: { start: '2026-02-09', end: '2026-05-09' },
+  summerRegularSession: { start: '2026-05-11', end: '2026-05-30' },
+  annualRetakeSession: { start: '2026-06-01', end: '2026-06-20' },
+  liquidationSession: { start: '2025-09-15', end: '2025-09-20' },
 };
 
 export function CalendarConfigModal({ isOpen, onClose }: CalendarConfigModalProps) {

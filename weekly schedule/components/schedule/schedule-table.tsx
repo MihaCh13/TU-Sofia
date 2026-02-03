@@ -90,6 +90,48 @@ export function ScheduleTable({ onCellClick, onEventClick }: ScheduleTableProps)
     return Math.max(1, rowSpan);
   };
 
+  // Odd/Even Week Coloring Logic
+  const getWeekType = (date: Date): 'odd' | 'even' | null => {
+    const calendarConfig = useScheduleStore.getState().calendarConfig;
+    if (!calendarConfig) return null;
+
+    const winterStart = new Date(calendarConfig.winterSemester.start);
+    const summerStart = new Date(calendarConfig.summerSemester.start);
+    
+    let referenceDate: Date | null = null;
+    
+    if (date >= winterStart && date <= new Date(calendarConfig.winterSemester.end)) {
+      referenceDate = winterStart;
+    } else if (date >= summerStart && date <= new Date(calendarConfig.summerSemester.end)) {
+      referenceDate = summerStart;
+    }
+
+    if (!referenceDate) return null;
+
+    const diffInDays = Math.floor((date.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24));
+    const weekNumber = Math.floor(diffInDays / 7) + 1;
+    return weekNumber % 2 === 1 ? 'odd' : 'even';
+  };
+
+  const isVacation = (date: Date): boolean => {
+    const vacations = useScheduleStore.getState().vacations;
+    const dateStr = date.toISOString().split('T')[0];
+    return vacations.includes(dateStr);
+  };
+
+  const isSession = (date: Date): string | null => {
+    const config = useScheduleStore.getState().calendarConfig;
+    if (!config) return null;
+    
+    const d = date.toISOString().split('T')[0];
+    if (d >= config.winterRegularSession.start && d <= config.winterRegularSession.end) return 'winter-regular';
+    if (d >= config.winterRetakeSession.start && d <= config.winterRetakeSession.end) return 'winter-retake';
+    if (d >= config.summerRegularSession.start && d <= config.summerRegularSession.end) return 'summer-regular';
+    if (d >= config.annualRetakeSession.start && d <= config.annualRetakeSession.end) return 'annual-retake';
+    if (d >= config.liquidationSession.start && d <= config.liquidationSession.end) return 'liquidation';
+    return null;
+  };
+
   return (
     <div className="flex-1 overflow-auto scrollbar-thin">
       <div className="min-w-max">
