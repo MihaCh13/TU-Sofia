@@ -20,12 +20,14 @@ export function ScheduleCell({
   rowSpan = 1,
   height = 100
 }: ScheduleCellProps) {
-  const regularEvents = events.filter(e => e.event_type !== 'makeup');
-  const oddWeekEvents = regularEvents.filter(e => e.week_cycle === 'odd');
-  const evenWeekEvents = regularEvents.filter(e => e.week_cycle === 'even');
-  const everyWeekEvents = regularEvents.filter(e => e.week_cycle === 'every');
+  // FIX #1: Do NOT filter out makeup events - treat them like regular events
+  // Sort ALL events by week_cycle only
+  const oddWeekEvents = events.filter(e => e.week_cycle === 'odd');
+  const evenWeekEvents = events.filter(e => e.week_cycle === 'even');
+  const everyWeekEvents = events.filter(e => e.week_cycle === 'every');
 
   const isEmpty = events.length === 0;
+  const totalEvents = events.length;
 
   // Render empty cell
   if (isEmpty) {
@@ -43,21 +45,23 @@ export function ScheduleCell({
     );
   }
 
-  // Single event for every week - FULL CELL
-  if (everyWeekEvents.length > 0 && oddWeekEvents.length === 0 && evenWeekEvents.length === 0) {
+  // FIX #3: GRID 2x2 LAYOUT for 3+ events (collision case)
+  if (totalEvents >= 3) {
     return (
       <td 
-        className="schedule-cell border border-border p-0"
+        className="schedule-cell border border-border p-1"
         style={{ height: `${height}px` }}
         rowSpan={rowSpan}
       >
-        <div className="h-full w-full">
-          {everyWeekEvents.map((event) => (
-            <EventBlock 
-              key={event.id} 
-              event={event} 
-              onClick={() => onEventClick(event)} 
-            />
+        <div className="grid-2x2">
+          {events.slice(0, 4).map((event) => (
+            <div key={event.id} className="grid-2x2-item">
+              <EventBlock 
+                event={event} 
+                isCompact
+                onClick={() => onEventClick(event)} 
+              />
+            </div>
           ))}
         </div>
       </td>
@@ -68,26 +72,19 @@ export function ScheduleCell({
   const hasOdd = oddWeekEvents.length > 0;
   const hasEven = evenWeekEvents.length > 0;
 
-  // Check total events for collision fallback (3+ events = stacked list)
-  const totalOddEvenEvents = oddWeekEvents.length + evenWeekEvents.length;
-
-  // DIAGONAL SPLIT for ODD/EVEN - Use diagonal layout when any odd or even exists and <= 2 total events
-  if ((hasOdd || hasEven) && totalOddEvenEvents <= 2) {
+  // FIX #2: DIAGONAL SPLIT for ODD/EVEN - Use when any odd or even exists
+  if (hasOdd || hasEven) {
     return (
       <td 
         className="schedule-cell border border-border p-0"
         style={{ height: `${height}px` }}
         rowSpan={rowSpan}
       >
-        <div className="diagonal-container">
-          {/* DIAGONAL LINE */}
-          <div className="diagonal-line" />
-          
+        <div className="diagonal-wrapper">
           {/* TOP-LEFT TRIANGLE - ODD WEEK */}
-          <div className="diagonal-odd">
-            <div className="diagonal-label odd-label">Неч.</div>
+          <div className="triangle-clip triangle-odd">
             {hasOdd ? (
-              <div className="diagonal-content odd-content">
+              <div className="triangle-content">
                 <EventBlock 
                   event={oddWeekEvents[0]} 
                   isCompact
@@ -96,19 +93,19 @@ export function ScheduleCell({
               </div>
             ) : (
               <div 
-                className="diagonal-empty odd-empty"
+                className="triangle-empty"
                 onClick={onCellClick}
               >
-                <Plus className="w-4 h-4 text-muted-foreground/40" />
+                <Plus className="w-4 h-4 text-muted-foreground/30" />
               </div>
             )}
+            <span className="glass-label glass-label-odd">Неч.</span>
           </div>
           
           {/* BOTTOM-RIGHT TRIANGLE - EVEN WEEK */}
-          <div className="diagonal-even">
-            <div className="diagonal-label even-label">Чет.</div>
+          <div className="triangle-clip triangle-even">
             {hasEven ? (
-              <div className="diagonal-content even-content">
+              <div className="triangle-content">
                 <EventBlock 
                   event={evenWeekEvents[0]} 
                   isCompact
@@ -117,42 +114,52 @@ export function ScheduleCell({
               </div>
             ) : (
               <div 
-                className="diagonal-empty even-empty"
+                className="triangle-empty"
                 onClick={onCellClick}
               >
-                <Plus className="w-4 h-4 text-muted-foreground/40" />
+                <Plus className="w-4 h-4 text-muted-foreground/30" />
               </div>
             )}
+            <span className="glass-label glass-label-even">Чет.</span>
           </div>
         </div>
       </td>
     );
   }
 
-  // COLLISION FALLBACK: 3+ odd/even events - stacked list view
-  if ((hasOdd || hasEven) && totalOddEvenEvents > 2) {
-    const allOddEvenEvents = [...oddWeekEvents, ...evenWeekEvents];
+  // FULL CELL for every-week events (1-2 events)
+  if (everyWeekEvents.length > 0) {
     return (
       <td 
-        className="schedule-cell border border-border p-1"
+        className="schedule-cell border border-border p-0"
         style={{ height: `${height}px` }}
         rowSpan={rowSpan}
       >
-        <div className="h-full flex flex-col gap-1 overflow-hidden">
-          {allOddEvenEvents.map((event) => (
+        <div className="h-full w-full">
+          {everyWeekEvents.length === 1 ? (
             <EventBlock 
-              key={event.id} 
-              event={event} 
-              isCompact
-              onClick={() => onEventClick(event)} 
+              event={everyWeekEvents[0]} 
+              onClick={() => onEventClick(everyWeekEvents[0])} 
             />
-          ))}
+          ) : (
+            <div className="flex gap-0.5 h-full p-1">
+              {everyWeekEvents.slice(0, 2).map((event) => (
+                <div key={event.id} className="flex-1 min-w-0">
+                  <EventBlock 
+                    event={event} 
+                    isCompact
+                    onClick={() => onEventClick(event)} 
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </td>
     );
   }
 
-  // Fallback: render all events
+  // Fallback: render all events in a list
   return (
     <td 
       className="schedule-cell border border-border p-1"
