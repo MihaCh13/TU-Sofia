@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/schedule/header';
 import { Legend } from '@/components/schedule/legend';
 import { SidebarCalendar } from '@/components/schedule/sidebar-calendar';
@@ -9,6 +9,9 @@ import { EventModal } from '@/components/schedule/event-modal';
 import type { ScheduleEvent } from '@/lib/schedule-types';
 
 export default function SchedulePlanner() {
+  useEffect(() => {
+    console.log('[v0] SchedulePlanner component mounted');
+  }, []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
   const [defaultDay, setDefaultDay] = useState<string>('');
