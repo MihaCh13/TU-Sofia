@@ -1,17 +1,14 @@
-import React from "react"
 import type { Metadata } from 'next'
-import { Poppins } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const poppins = Poppins({ 
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"]
-});
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Университетски Разпис',
-  description: 'Управление на учебния график',
+  title: 'v0 App',
+  description: 'Created with v0',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -38,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="bg">
-      <body className={`${poppins.className} antialiased`}>
+    <html lang="en">
+      <body className={`font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
