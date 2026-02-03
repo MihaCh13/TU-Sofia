@@ -248,16 +248,17 @@
 }
 
 /* =====================================================
-   DIAGONAL SPLIT CELL LAYOUT (True Diagonal)
+   DIAGONAL SPLIT CELL LAYOUT (Bottom-Left to Top-Right)
    ===================================================== */
 .diagonal-wrapper {
   position: relative;
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background-color: white;
 }
 
-/* Diagonal line divider (top-right to bottom-left) */
+/* Diagonal line divider (bottom-left to top-right) */
 .diagonal-wrapper::after {
   content: '';
   position: absolute;
@@ -268,10 +269,10 @@
   pointer-events: none;
   z-index: 10;
   background: linear-gradient(
-    to bottom left,
+    to top right,
     transparent calc(50% - 1px),
-    var(--border) calc(50% - 1px),
-    var(--border) calc(50% + 1px),
+    rgba(100, 116, 139, 0.4) calc(50% - 1px),
+    rgba(100, 116, 139, 0.4) calc(50% + 1px),
     transparent calc(50% + 1px)
   );
 }
@@ -283,18 +284,45 @@
   overflow: hidden;
 }
 
-/* TOP-LEFT TRIANGLE - ODD WEEK */
+/* TOP-LEFT TRIANGLE - ODD WEEK (bottom-left to top-right diagonal) */
 .triangle-clip.triangle-odd {
   clip-path: polygon(0 0, 100% 0, 0 100%);
-  background-color: var(--odd-split-bg);
   z-index: 1;
 }
 
 /* BOTTOM-RIGHT TRIANGLE - EVEN WEEK */
 .triangle-clip.triangle-even {
-  clip-path: polygon(100% 100%, 0 100%, 100% 0);
-  background-color: var(--even-split-bg);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
   z-index: 1;
+}
+
+/* Triangle background colors based on SUBJECT TYPE */
+.triangle-empty-bg {
+  background-color: transparent;
+}
+
+.triangle-lecture-bg {
+  background: linear-gradient(135deg, var(--lecture) 0%, var(--lecture-dark) 100%);
+}
+
+.triangle-seminar-bg {
+  background: linear-gradient(135deg, var(--seminar) 0%, var(--seminar-dark) 100%);
+}
+
+.triangle-lab-bg {
+  background: linear-gradient(135deg, var(--lab) 0%, var(--lab-dark) 100%);
+}
+
+.triangle-makeup-bg {
+  background: 
+    repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 4px,
+      var(--makeup-stripe) 4px,
+      var(--makeup-stripe) 6px
+    ),
+    linear-gradient(135deg, var(--makeup) 0%, var(--makeup-dark) 100%);
 }
 
 /* Triangle content positioning */
@@ -303,22 +331,24 @@
   overflow: hidden;
 }
 
-.triangle-odd .triangle-content {
-  top: 14px;
+/* ODD content: top-left aligned */
+.triangle-content-odd {
+  top: 16px;
   left: 4px;
   width: calc(55% - 8px);
-  height: calc(50% - 16px);
+  height: calc(48% - 16px);
 }
 
-.triangle-even .triangle-content {
-  bottom: 14px;
+/* EVEN content: bottom-right aligned */
+.triangle-content-even {
+  bottom: 16px;
   right: 4px;
   width: calc(55% - 8px);
-  height: calc(50% - 16px);
+  height: calc(48% - 16px);
 }
 
-/* Empty state for triangle halves */
-.triangle-empty {
+/* Empty zone for clicking to add events */
+.triangle-empty-zone {
   position: absolute;
   display: flex;
   align-items: center;
@@ -326,23 +356,23 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   border-radius: 4px;
-  width: 26px;
-  height: 26px;
-  background: rgba(255, 255, 255, 0.35);
+  width: 28px;
+  height: 28px;
+  background: rgba(148, 163, 184, 0.15);
 }
 
-.triangle-odd .triangle-empty {
-  top: 28%;
-  left: 18%;
+.triangle-empty-odd {
+  top: 30%;
+  left: 15%;
 }
 
-.triangle-even .triangle-empty {
-  bottom: 28%;
-  right: 18%;
+.triangle-empty-even {
+  bottom: 30%;
+  right: 15%;
 }
 
-.triangle-empty:hover {
-  background: rgba(255, 255, 255, 0.6);
+.triangle-empty-zone:hover {
+  background: rgba(148, 163, 184, 0.3);
 }
 
 /* Glass label badges */
@@ -352,24 +382,24 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 2px 5px;
+  padding: 2px 6px;
   border-radius: 4px;
   z-index: 15;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(4px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .glass-label-odd {
   top: 3px;
   left: 3px;
-  color: #1e40af;
+  color: #334155;
 }
 
 .glass-label-even {
   bottom: 3px;
   right: 3px;
-  color: #6b21a8;
+  color: #334155;
 }
 
 /* =====================================================

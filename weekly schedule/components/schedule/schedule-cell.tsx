@@ -72,8 +72,24 @@ export function ScheduleCell({
   const hasOdd = oddWeekEvents.length > 0;
   const hasEven = evenWeekEvents.length > 0;
 
-  // FIX #2: DIAGONAL SPLIT for ODD/EVEN - Use when any odd or even exists
+  // Helper function to get background class based on subject type and event type
+  const getTriangleBgClass = (event: ScheduleEvent | undefined) => {
+    if (!event) return 'triangle-empty-bg';
+    // Makeup events use makeup-bg, otherwise use subject type
+    if (event.event_type === 'makeup') return 'triangle-makeup-bg';
+    if (event.subject_type === 'lecture') return 'triangle-lecture-bg';
+    if (event.subject_type === 'seminar') return 'triangle-seminar-bg';
+    if (event.subject_type === 'lab') return 'triangle-lab-bg';
+    return 'triangle-empty-bg';
+  };
+
+  // DIAGONAL SPLIT for ODD/EVEN - Use when any odd or even exists
   if (hasOdd || hasEven) {
+    const oddEvent = oddWeekEvents[0];
+    const evenEvent = evenWeekEvents[0];
+    const oddBgClass = getTriangleBgClass(oddEvent);
+    const evenBgClass = getTriangleBgClass(evenEvent);
+
     return (
       <td 
         className="schedule-cell border border-border p-0"
@@ -82,18 +98,18 @@ export function ScheduleCell({
       >
         <div className="diagonal-wrapper">
           {/* TOP-LEFT TRIANGLE - ODD WEEK */}
-          <div className="triangle-clip triangle-odd">
+          <div className={cn("triangle-clip triangle-odd", oddBgClass)}>
             {hasOdd ? (
-              <div className="triangle-content">
+              <div className="triangle-content triangle-content-odd">
                 <EventBlock 
-                  event={oddWeekEvents[0]} 
+                  event={oddEvent} 
                   isCompact
-                  onClick={() => onEventClick(oddWeekEvents[0])} 
+                  onClick={() => onEventClick(oddEvent)} 
                 />
               </div>
             ) : (
               <div 
-                className="triangle-empty"
+                className="triangle-empty-zone triangle-empty-odd"
                 onClick={onCellClick}
               >
                 <Plus className="w-4 h-4 text-muted-foreground/30" />
@@ -103,18 +119,18 @@ export function ScheduleCell({
           </div>
           
           {/* BOTTOM-RIGHT TRIANGLE - EVEN WEEK */}
-          <div className="triangle-clip triangle-even">
+          <div className={cn("triangle-clip triangle-even", evenBgClass)}>
             {hasEven ? (
-              <div className="triangle-content">
+              <div className="triangle-content triangle-content-even">
                 <EventBlock 
-                  event={evenWeekEvents[0]} 
+                  event={evenEvent} 
                   isCompact
-                  onClick={() => onEventClick(evenWeekEvents[0])} 
+                  onClick={() => onEventClick(evenEvent)} 
                 />
               </div>
             ) : (
               <div 
-                className="triangle-empty"
+                className="triangle-empty-zone triangle-empty-even"
                 onClick={onCellClick}
               >
                 <Plus className="w-4 h-4 text-muted-foreground/30" />
