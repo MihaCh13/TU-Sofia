@@ -11,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useScheduleStore } from '@/lib/schedule-store';
 import { TIME_SLOTS, DAYS, DAY_NAMES } from '@/lib/schedule-types';
 import type { ScheduleEvent } from '@/lib/schedule-types';
-import { Save, Trash2, X, FileText, Clock, Settings, AlertTriangle } from 'lucide-react';
+import { Save, Trash2, X, FileText, Clock, Settings, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -121,6 +122,37 @@ export function EventModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          {/* Makeup Event Toggle */}
+          <div className="p-4 rounded-xl border-2 border-dashed border-pink-300 bg-gradient-to-r from-pink-50 to-pink-100/50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <RefreshCw className="w-5 h-5 text-pink-600" />
+                <div>
+                  <Label htmlFor="makeup-toggle" className="font-semibold text-pink-900">
+                    Отработване
+                  </Label>
+                  <p className="text-xs text-pink-600/80">
+                    Включете за посещение на друга група
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="makeup-toggle"
+                checked={formData.event_type === 'makeup'}
+                onCheckedChange={(checked) => {
+                  setFormData({ 
+                    ...formData, 
+                    event_type: checked ? 'makeup' : 'regular',
+                    // Reset to seminar if switching to makeup (lectures not allowed for makeup)
+                    subject_type: checked && formData.subject_type === 'lecture' ? 'seminar' : formData.subject_type
+                  });
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
           {/* Section 1: Basic Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
@@ -155,7 +187,7 @@ export function EventModal({
                     <SelectValue placeholder="Изберете тип" />
                   </SelectTrigger>
                   <SelectContent>
-                    {!isMakeup && <SelectItem value="lecture">Лекция</SelectItem>}
+                    {formData.event_type !== 'makeup' && <SelectItem value="lecture">Лекция</SelectItem>}
                     <SelectItem value="seminar">Семинарно упражнение</SelectItem>
                     <SelectItem value="lab">Лабораторно упражнение</SelectItem>
                   </SelectContent>
@@ -278,7 +310,7 @@ export function EventModal({
               Допълнително
             </h3>
             
-            {!isMakeup && (
+            {formData.event_type !== 'makeup' && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="control_form" className="font-semibold">
@@ -323,7 +355,7 @@ export function EventModal({
               </div>
             )}
 
-            {isMakeup ? (
+            {formData.event_type === 'makeup' ? (
               <div className="space-y-2">
                 <Label htmlFor="group_number" className="font-semibold">
                   Номер на група

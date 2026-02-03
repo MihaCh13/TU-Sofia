@@ -11,14 +11,20 @@ interface EventBlockProps {
 }
 
 export function EventBlock({ event, isCompact = false, onClick }: EventBlockProps) {
-  const bgClass = 
-    event.subject_type === 'lecture' ? 'lecture-bg' :
-    event.subject_type === 'seminar' ? 'seminar-bg' :
-    event.subject_type === 'lab' ? 'lab-bg' : 'makeup-bg';
+  // Prioritize makeup type over other types
+  const isMakeup = event.event_type === 'makeup';
+  
+  const bgClass = isMakeup 
+    ? 'makeup-bg'
+    : event.subject_type === 'lecture' 
+      ? 'lecture-bg' 
+      : event.subject_type === 'seminar' 
+        ? 'seminar-bg' 
+        : 'lab-bg';
 
-  const showControl = event.control_form !== 'none' && event.subject_type === 'lecture';
-  const showProject = event.project_type !== 'none' && event.subject_type === 'lecture';
-  const showSubgroup = event.subgroup !== 'none' && (event.subject_type === 'seminar' || event.subject_type === 'lab');
+  const showControl = event.control_form !== 'none' && event.subject_type === 'lecture' && !isMakeup;
+  const showProject = event.project_type !== 'none' && event.subject_type === 'lecture' && !isMakeup;
+  const showSubgroup = event.subgroup !== 'none' && (event.subject_type === 'seminar' || event.subject_type === 'lab') && !isMakeup;
 
   return (
     <div
@@ -41,6 +47,13 @@ export function EventBlock({ event, isCompact = false, onClick }: EventBlockProp
         >
           {event.subject_name}
         </div>
+        
+        {/* Makeup label - shown below subject name */}
+        {isMakeup && !isCompact && (
+          <div className="text-[11px] font-semibold text-pink-700/80 italic">
+            Отработване
+          </div>
+        )}
         
         {/* Room Number - normal weight */}
         <div className={cn(
