@@ -1,0 +1,190 @@
+create database _93_b_2026;
+use _93_b_2026;
+ 
+create table students (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    egn VARCHAR(10) NOT NULL UNIQUE,
+    address VARCHAR(50) NOT NULL,
+    phone VARCHAR(20) NULL DEFAULT NULL,
+    class VARCHAR(3) NULL DEFAULT NULL 
+);
+ 
+create table teachers (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    egn VARCHAR(10) NOT NULL UNIQUE,
+    phone VARCHAR(20) NULL DEFAULT NULL
+);
+ 
+create table sports (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+ 
+create table sportGroups (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    location VARCHAR(50) NOT NULL,
+    dayOfWeek ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
+    hourOfTraining TIME NOT NULL,
+    UNIQUE KEY(location, dayOfWeek, hourOfTraining)
+);
+alter table sportGroups 
+add sport_id INT NOT NULL;
+ 
+alter table sportGroups 
+add CONSTRAINT FOREIGN KEY(sport_id) REFERENCES sports(id);
+ 
+alter table sportGroups 
+add coach_id INT NOT NULL;
+ 
+alter table sportGroups 
+add CONSTRAINT FOREIGN KEY(coach_id) REFERENCES teachers(id);
+ 
+create table student_sport (
+	student_id INT NOT NULL,
+    sportGroup_id INT NOT NULL,
+    CONSTRAINT FOREIGN KEY(student_id) REFERENCES students(id),
+    CONSTRAINT FOREIGN KEY(sportGroup_id) REFERENCES sportGroups(id),
+    PRIMARY KEY(student_id, sportGroup_id)
+);
+ 
+insert into sports 
+VALUES 
+(null, 'football'),
+(null, 'volleyball'),
+(null, 'tennis'),
+(null, 'basketball');
+ 
+insert into teachers(name, egn, phone)
+VALUES 
+('Ivan', '1234567890', '0888767676'),
+('Ivan Jr.', '3456789012', '0888545454'),
+('Ivan II', '5612347890', '0888373737');
+ 
+insert into students(name, egn, address, phone, class)
+VALUES 
+('Petko', '1234567890', 'ulica 5', '0888776667','94'),
+('Petko III', '4123567890', 'ulica 4', '0888232321','93'),
+('Pavel JR. MC', '3212567890', 'ulica 911', '0888141414','92');
+insert into students(name, egn, address, phone, class)
+values 
+("Isen", "312231312", "str. sth", "0899888884", "00");
+ 
+insert into sportGroups(location, dayOfWeek, hourOfTraining, sport_id, coach_id)
+VALUES 
+('Sofia-Mladost4', 'Monday', '08:00:00', 1,1),
+('Sofia-Mladost2', 'Friday', '15:00:00', 2,3),
+('Sofia-Mladost1', 'Tuesday', '10:30:00', 3,2);
+ 
+insert into student_sport
+VALUES
+(1,1),
+(2,1),
+(3,1),
+(2,2),
+(2,3),
+(3,2);
+ 
+update teachers set name = "Ivan New" where id=1; 
+select * from students where id=2; 
+select * from students where id between 1 and 3; 
+ 
+select sportGroups.location, sportGroups.dayOfWeek, sport.name 
+from sportGroups JOIN sport 
+ON sportGroups.sport_id = sport.id; 
+ 
+select sportgroups.location,
+sportgroups.dayOfWeek,
+teachers.name
+from sportgroups join teachers
+on sportgroups.id = teachers.id;
+
+select sports.name, teachers.name
+from sports
+join sportGroups on sportGroups.sport_id = sports.id
+join teachers on teachers.id = sportGroups.coach_id;
+
+-- -----------------------------------------------
+select sportgroups.location,
+sportgroups.dayOfWeek,
+sportgroups.hourOfTraining,
+sportgroups.sport_id,
+teachers.name
+from sportgroups
+left outer join teachers
+on sportgroups.coach_id = teachers.id;
+
+SELECT sports.name, teachers.name
+FROM sports
+JOIN teachers
+ON teachers.id IN (
+    SELECT coach_id
+    FROM sportGroups
+    WHERE sportGroups.sport_id = sports.id
+);
+
+SELECT sports.name, teachers.name
+FROM sports
+JOIN sportGroups 
+    ON sportGroups.sport_id = sports.id
+JOIN teachers 
+    ON teachers.id = sportGroups.coach_id;
+    
+
+
+-- -------------------------------------------------------
+
+
+
+select sportgroups.location,
+sportgroups.dayOfWeek,
+sportgroups.hourOfTraining,
+sportgroups.sport_id,
+coaches.name
+from sportgroups
+left outer join teachers
+on sportgroups.coach_id = teachers.id;
+
+
+
+-- -------------------------------------------------------
+
+select sportgroups.location,
+sportgroups.dayOfWeek,
+sportgroups.hourOfTraining,
+sportgroups.sport_id,
+teachers.name
+from sportgroups
+right outer join teachers
+on sportgroups.coach_id = teachers.id;
+
+
+
+
+-- -------------------------------------------------
+-- изведете списък с имената на учениците класовете им, както и номера [id] 
+-- на групата в която тренират за всички ученици, които тренират в понеделник 
+-- от 8:00 и са при тренор с определено име, но само за групите му по тенис.
+
+SELECT students.name,
+       students.class,
+       sportGroups.id
+FROM students
+
+JOIN student_sport 
+    ON students.id = student_sport.student_id
+    
+JOIN sportGroups 
+    ON student_sport.sportGroup_id = sportGroups.id
+    
+JOIN teachers 
+    ON sportGroups.coach_id = teachers.id
+    
+JOIN sports 
+    ON sportGroups.sport_id = sports.id
+    
+WHERE sportGroups.dayOfWeek = 'Monday'
+AND sportGroups.hourOfTraining = '08:00:00'
+AND teachers.name = 'Ivan New'
+AND sports.name = 'tennis';

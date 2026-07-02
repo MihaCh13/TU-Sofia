@@ -1,0 +1,100 @@
+# depslib dependency file v1.0
+1401025283 source:g:\uchebnimateriali\bd\demos\c_sample\main.c
+	<stdio.h>
+	<stdlib.h>
+	<my_global.h>
+	<mysql.h>
+
+1401025544 d:\mysql\mysql-connector-c\include\my_global.h
+	<my_config.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<io.h>
+	<process.h>
+	<sys/types.h>
+	<pthread.h>
+	<pthread.h>
+	<stdio.h>
+	<stdarg.h>
+	<stdlib.h>
+	<stddef.h>
+	<math.h>
+	<limits.h>
+	<float.h>
+	<fenv.h>
+	<sys/types.h>
+	<fcntl.h>
+	<sys/timeb.h>
+	<sys/time.h>
+	<time.h>
+	<sys/time.h>
+	<time.h>
+	<unistd.h>
+	<alloca.h>
+	<errno.h>
+	<crypt.h>
+	<assert.h>
+	<sys/stream.h>
+	<my_compiler.h>
+	<sys/socket.h>
+	<math.h>
+	<my_dbug.h>
+	<my_byteorder.h>
+	<dlfcn.h>
+	<new>
+
+1366756956 d:\mysql\mysql-connector-c\include\my_config.h
+
+1366756282 d:\mysql\mysql-connector-c\include\my_compiler.h
+	<my_global.h>
+	<my_attribute.h>
+
+1366756282 d:\mysql\mysql-connector-c\include\my_attribute.h
+
+1401025327 d:\mysql\mysql-connector-c\include\my_dbug.h
+	<sys/types.h>
+	<unistd.h>
+	<signal.h>
+
+1366756282 d:\mysql\mysql-connector-c\include\my_byteorder.h
+	"byte_order_generic_x86.h"
+	"byte_order_generic_x86_64.h"
+	"byte_order_generic.h"
+	"big_endian.h"
+	"little_endian.h"
+
+1366756282 d:\mysql\mysql-connector-c\include\byte_order_generic_x86.h
+
+1366756282 d:\mysql\mysql-connector-c\include\byte_order_generic_x86_64.h
+
+1366756282 d:\mysql\mysql-connector-c\include\byte_order_generic.h
+
+1366756282 d:\mysql\mysql-connector-c\include\big_endian.h
+
+1366756282 d:\mysql\mysql-connector-c\include\little_endian.h
+
+1366756282 d:\mysql\mysql-connector-c\include\mysql.h
+	<standards.h>
+	<sys/types.h>
+	<winsock2.h>
+	"mysql_version.h"
+	"mysql_com.h"
+	"mysql_time.h"
+	"my_list.h"
+	"typelib.h"
+	"my_alloc.h"
+
+1366756984 d:\mysql\mysql-connector-c\include\mysql_version.h
+	<custom_conf.h>
+
+1366756282 d:\mysql\mysql-connector-c\include\mysql_com.h
+
+1366756282 d:\mysql\mysql-connector-c\include\mysql_time.h
+
+1366756282 d:\mysql\mysql-connector-c\include\my_list.h
+
+1366756282 d:\mysql\mysql-connector-c\include\typelib.h
+	"my_alloc.h"
+
+1366756282 d:\mysql\mysql-connector-c\include\my_alloc.h
+

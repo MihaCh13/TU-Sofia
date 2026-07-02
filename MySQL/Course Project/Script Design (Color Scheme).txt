@@ -1,0 +1,61 @@
+{
+  "workbench.colorCustomizations": {
+    "editor.background": "#FFFFFF",
+    "editor.foreground": "#000000"
+  },
+  "editor.tokenColorCustomizations": {
+    "comments": "#6b6b6b",   
+    "keywords": "#c846ff",   
+    "strings": "#008610",    
+    "numbers": "#FF8C00",    
+    "functions": "#f10000",  
+    "variables": "#000000",  
+    "textMateRules": [
+      {
+        "scope": [
+          // Математически и логически оператори (*, /, +, -, =, >)
+          "keyword.operator"
+        ],
+        "settings": {
+          "foreground": "#e5a800" 
+        }
+      },
+      {
+        "scope": [
+          // Заявки като CREATE, DROP, ALTER, INSERT, UPDATE
+          "keyword.other.create.sql",
+          "keyword.other.DDL.sql",
+          "keyword.other.DML.sql",
+          "keyword.other.sql"
+        ],
+        "settings": {
+          "foreground": "#FF00FF",
+          "fontStyle": "bold"
+        }
+      },
+      {
+        "scope": [
+          // Скоби
+          "punctuation",
+          "punctuation.parenthesis",
+          "punctuation.bracket",
+          "punctuation.brace",
+          "meta.brace"
+        ],
+        "settings": {
+          "foreground": "#000000"
+        }
+      },
+      {
+        "scope": [
+          // Условни цикли (IF, ELSE, CASE)
+          "keyword.control.conditional"
+        ],
+        "settings": {
+          "foreground": "#B22222",
+          "fontStyle": "bold"
+        }
+      }
+    ]
+  }
+}

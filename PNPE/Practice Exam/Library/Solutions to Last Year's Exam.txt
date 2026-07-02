@@ -1,0 +1,157 @@
+//Book Class
+
+
+package ExamSolution;
+
+import java.util.ArrayList;
+
+public class Book{
+    public int Id;
+    public String ISBN;
+    public String Title;
+    public String Author;
+    public boolean Availability;
+    public ArrayList<String> Library;
+}
+
+
+/////Сървърна Част
+
+
+package ExamSolution;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
+public class ServerPart{
+
+    public static void main(String[] args) throws IOException{
+
+        ArrayList<Book> allBooks = new ArrayList<>();
+
+        try {
+            ServerSocket mainServer = new ServerSocket(5678);
+            Socket clientSocket = new Socket();
+            while(true){
+                clientSocket=mainServer.accept();
+
+                new ClientThread().start();
+            }
+
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+
+    }
+}
+
+
+//////////////////////// Клас за Клиентска Нишка
+
+
+
+package ExamSolution;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.Array;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class ClientThread extends Thread{
+    private Socket socket;
+    private ArrayList<Book> allBooks;
+
+    public ArrayList<Book> RentedBooks;
+
+    PrintStream newPrintStream;
+    Scanner newScanner;
+
+    public void run(){
+
+        try{
+            newScanner = new Scanner(socket.getInputStream());
+            newPrintStream = new PrintStream(socket.getOutputStream());
+
+            while(true){
+                int input;
+                input=newScanner.nextInt();
+                switch (input){
+
+                    case 1: newPrintStream.println("Give me a Book name: ");
+                            String BookName = newScanner.nextLine();
+                            newPrintStream.println(FindBook(BookName));
+                    break;
+                    case 2: newPrintStream.println("Give me a Book ID: ");
+                            int MainID = newScanner.nextInt();
+                            addRentedBook(MainID);
+                            break;
+                    case 3: newPrintStream.println("Give me a Library name: ");
+                            String LibraryName = newScanner.nextLine();
+                            newPrintStream.println(AllBooksInLibrary(LibraryName));
+                    default: break;
+                }
+            }
+        }
+        catch(IOException e) {
+            e.getStackTrace();
+        }
+    }
+
+    public ArrayList<String> FindBook(String BookName){
+        for(Book i:allBooks){
+            if(BookName.equalsIgnoreCase(i.getName())){
+                if(i.getAvailability()){
+                    return i.getLibraries();
+                }
+                else{
+                    newPrintStream.println("The book isnt available");
+                    return null;
+                }
+            }
+        }
+        newPrintStream.println("The book doesnt exist");
+        return null;
+    }
+
+    public void addRentedBook(int BookId){
+        for (Book book: allBooks){
+            if(BookId == book.Id){
+                for (Book books: RentedBooks){
+                    if (BookId == books.Id){
+                        newPrintStream.println("This Book is Already Rented!");
+                    }
+                }
+                RentedBooks.add(book);
+            }
+        }
+        newPrintStream.println("This Book ID doesnt exist!");
+    }
+
+    public ArrayList<Book> AllBooksInLibrary(String LibraryName){
+
+        ArrayList<Book> AllFoundBooks = new ArrayList<>();
+        ArrayList<String> Libraries = new ArrayList<>();
+        for (Book book: allBooks){
+            Libraries = book.getLibrary();
+            for (String library: Libraries) {
+                if (LibraryName.equals(library)) {
+                    AllFoundBooks.add(book);
+                }
+            }
+        }
+        if (AllFoundBooks.isEmpty()) {
+            newPrintStream.println("This Library cannot be found!");
+        }
+        else{
+            return AllFoundBooks;
+        }
+    }
+
+}

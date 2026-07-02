@@ -1,0 +1,53 @@
+DROP DATABASE IF EXISTS COFFEE;
+
+CREATE DATABASE COFFEE;
+
+USE COFFEE;
+
+-- COFFEES
+
+CREATE TABLE COFFEES (
+COF_NAME VARCHAR(32) PRIMARY KEY,
+ SUP_ID INTEGER,
+ PRICE DOUBLE,
+ SALES INTEGER,
+ TOTAL INTEGER
+);
+
+INSERT INTO COFFEES VALUES ('Colombian', 101, 7.99, 0, 0);
+INSERT INTO COFFEES VALUES ('French_Roast', 49, 8.99, 0, 0);
+INSERT INTO COFFEES VALUES ('Espresso', 150, 9.99, 0, 0);
+INSERT INTO COFFEES VALUES ('Colombian_Decaf', 101, 8.99, 0, 0);
+INSERT INTO COFFEES VALUES ('French_Roast_Decaf', 49, 9.99, 0, 0);
+
+-- SUPPLIERS
+
+CREATE TABLE SUPPLIERS (
+SUP_ID INTEGER PRIMARY KEY, 
+SUP_NAME VARCHAR(40),
+STREET VARCHAR(40), 
+CITY VARCHAR(20),
+STATE CHAR(2), 
+ZIP CHAR(5)
+);
+
+INSERT INTO SUPPLIERS 
+  VALUES (101, 'Acme, Inc.', '99 Market Street', 'Groundsville', 'CA', '95199');
+INSERT INTO SUPPLIERS 
+  VALUES (49,  'Superior Coffee', '1 Party Place', 'Mendocino',  'CA', '95460');
+INSERT INTO SUPPLIERS 
+  VALUES (150, 'The High Ground', '100 Coffee Lane', 'Meadows',  'CA', '93966');
+
+delimiter $$
+CREATE PROCEDURE demoSp(IN inputParam VARCHAR(255), \
+                        INOUT inOutParam INT)
+BEGIN
+    DECLARE z INT;
+    SET z = inOutParam + 1;
+    SET inOutParam = z;
+
+    SELECT inputParam;
+
+    SELECT CONCAT('zyxw', inputParam);
+END$$
+delimiter ;

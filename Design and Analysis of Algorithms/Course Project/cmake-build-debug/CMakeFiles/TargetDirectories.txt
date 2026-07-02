@@ -1,0 +1,3 @@
+C:/Users/mishe/Desktop/TY/CAA/CAA_project/cmake-build-debug/CMakeFiles/CAA_project.dir
+C:/Users/mishe/Desktop/TY/CAA/CAA_project/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/mishe/Desktop/TY/CAA/CAA_project/cmake-build-debug/CMakeFiles/rebuild_cache.dir
